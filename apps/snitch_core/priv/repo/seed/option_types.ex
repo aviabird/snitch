@@ -1,6 +1,6 @@
 defmodule Snitch.Seed.OptionType do
   alias Snitch.Core.Tools.MultiTenancy.Repo
-  alias Snitch.Data.Schema.OptionType
+  alias Snitch.Data.Schema.Option
 
   def seed!() do
     create_option_type("size", "Size")
@@ -13,6 +13,6 @@ defmodule Snitch.Seed.OptionType do
       display_name: display_name
     }
 
-    %OptionType{} |> OptionType.create_changeset(params) |> Repo.insert!()
+    %Option{} |> Option.create_changeset(params) |> Repo.insert!()
   end
 end

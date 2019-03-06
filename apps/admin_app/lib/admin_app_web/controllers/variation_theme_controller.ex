@@ -3,7 +3,7 @@ defmodule AdminAppWeb.VariationThemeController do
 
   alias Snitch.Data.Model.VariationTheme, as: VTModel
   alias Snitch.Data.Schema.VariationTheme, as: VTSchema
-  alias Snitch.Data.Model.OptionType
+  alias Snitch.Data.Model.Option, as: OptionModel
 
   plug(:load_resources when action in [:new, :edit, :update, :create])
 
@@ -72,6 +72,6 @@ defmodule AdminAppWeb.VariationThemeController do
   end
 
   defp load_resources(conn, _opts) do
-    assign(conn, :option_types, OptionType.get_all())
+    assign(conn, :option_types, OptionModel.get_all())
   end
 end

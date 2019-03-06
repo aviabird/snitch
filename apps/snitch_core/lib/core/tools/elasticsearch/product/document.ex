@@ -92,7 +92,7 @@ defimpl Elasticsearch.Document, for: Snitch.Data.Schema.Product do
 
   defp option_map(option) do
     %{
-      id: option.option_type.display_name,
+      id: option.option.display_name,
       value: option.value
     }
   end

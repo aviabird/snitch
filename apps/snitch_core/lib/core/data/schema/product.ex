@@ -15,7 +15,7 @@ defmodule Snitch.Data.Schema.Product do
   alias Snitch.Data.Schema.{
     Variation,
     Image,
-    ProductOptionValue,
+    OptionValue,
     VariationTheme,
     Review,
     ProductBrand,
@@ -82,7 +82,7 @@ defmodule Snitch.Data.Schema.Product do
       join_keys: [parent_product_id: :id, child_product_id: :id]
     )
 
-    has_many(:options, ProductOptionValue)
+    has_many(:options, OptionValue)
     has_many(:stock_items, StockItem)
 
     many_to_many(:reviews, Review, join_through: "snitch_product_reviews")

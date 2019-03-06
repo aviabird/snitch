@@ -72,7 +72,7 @@ defmodule AdminAppWeb.ProductController do
   end
 
   def edit(conn, %{"id" => id} = params) do
-    preloads = [variants: [options: :option_type], images: [], taxon: [:variation_themes]]
+    preloads = [variants: [options: :option], images: [], taxon: [:variation_themes]]
 
     with {:ok, %ProductSchema{} = product} <- ProductModel.get(id) do
       product = product |> Repo.preload(preloads)
@@ -308,7 +308,7 @@ defmodule AdminAppWeb.ProductController do
         |> String.trim()
         |> String.split(",")
         |> Enum.map(fn option_value ->
-          %{option_type_id: map["option_type_id"], value: option_value}
+          %{option_id: map["option_type_id"], value: option_value}
         end)
       end)
 

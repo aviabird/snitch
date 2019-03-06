@@ -21,7 +21,7 @@ defmodule Snitch.Tools.ElasticSearch.Product.Store do
       parent_product: [:brand, :images, reviews: [rating_option_vote: :rating_option]]
     ],
     reviews: [rating_option_vote: :rating_option],
-    options: [:option_type]
+    options: [:option]
   ]
 
   @index if Mix.env() == :test, do: "products_test", else: "products"

@@ -1,66 +1,66 @@
-defmodule Snitch.Data.Model.OptionType do
+defmodule Snitch.Data.Model.Option do
   @moduledoc """
-  OptionType API
+  Option API
   """
   use Snitch.Data.Model
-  alias Snitch.Data.Schema.OptionType
+  alias Snitch.Data.Schema.Option
   alias Snitch.Data.Schema.Product
   alias Snitch.Core.Tools.MultiTenancy.Repo
   import Ecto.Query
 
   @doc """
-  Create a OptionType with supplied params
+  Create a Option with supplied params
   """
-  @spec create(map) :: {:ok, OptionType.t()} | {:error, Ecto.Changeset.t()}
+  @spec create(map) :: {:ok, Option.t()} | {:error, Ecto.Changeset.t()}
   def create(params) do
-    QH.create(OptionType, params, Repo)
+    QH.create(Option, params, Repo)
   end
 
   @doc """
-  Returns all OptionTypes
+  Returns all Options
   """
-  @spec get_all() :: [OptionType.t()]
+  @spec get_all() :: [Option.t()]
   def get_all do
-    Repo.all(OptionType)
+    Repo.all(Option)
   end
 
   @doc """
-  Returns an OptionType
+  Returns an Option
 
   Takes OptionType id as input
   """
-  @spec get(integer) :: {:ok, OptionType.t()} | {:error, atom}
+  @spec get(integer) :: {:ok, Option.t()} | {:error, atom}
   def get(id) do
-    QH.get(OptionType, id, Repo)
+    QH.get(Option, id, Repo)
   end
 
   @doc """
-  Update the OptionType with supplied params and OptionType instance
+  Update the Option with supplied params and Option instance
   """
-  @spec update(OptionType.t(), map) :: {:ok, OptionType.t()} | {:error, Ecto.Changeset.t()}
+  @spec update(Option.t(), map) :: {:ok, Option.t()} | {:error, Ecto.Changeset.t()}
   def update(model, params) do
-    QH.update(OptionType, params, model, Repo)
+    QH.update(Option, params, model, Repo)
   end
 
   @doc """
-  Deletes the OptionType
+  Deletes the Option
   """
   @spec delete(non_neg_integer | struct()) ::
-          {:ok, OptionType.t()} | {:error, Ecto.Changeset.t()} | {:error, :not_found}
+          {:ok, Option.t()} | {:error, Ecto.Changeset.t()} | {:error, :not_found}
   def delete(id) when is_integer(id) do
-    QH.delete(OptionType, id, Repo)
+    QH.delete(Option, id, Repo)
   end
 
-  def delete(%OptionType{} = instance) do
-    QH.delete(OptionType, instance, Repo)
+  def delete(%Option{} = instance) do
+    QH.delete(Option, instance, Repo)
   end
 
   @doc """
-  Checks whether the OptionType is associated to any product's variation theme.
+  Checks whether the Option is associated to any product's variation theme.
   """
   @spec is_theme_associated(non_neg_integer) :: true | false
   def is_theme_associated(option_type_id) do
-    option_preloader = from(ot in OptionType, where: ot.id == ^option_type_id)
+    option_preloader = from(ot in Option, where: ot.id == ^option_type_id)
 
     products =
       from(p in Product, preload: [theme: [option_types: ^option_preloader]]) |> Repo.all()

@@ -1,10 +1,10 @@
 defmodule Snitch.Demo.VariationTheme do
   alias Snitch.Core.Tools.MultiTenancy.Repo
   alias Snitch.Data.Schema.VariationTheme
-  alias Snitch.Data.Schema.OptionType
+  alias Snitch.Data.Schema.Option
 
   defp get_option_type do
-    Repo.all(OptionType)
+    Repo.all(Option)
   end
 
   def create_variation_themes do

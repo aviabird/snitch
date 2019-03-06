@@ -2,13 +2,13 @@ defmodule Snitch.Data.Schema.VariationTheme do
   @moduledoc """
   Models Variation theme
 
-  Variation theme is group of OptionTypes
+  Variation theme is group of Options
   """
 
   use Snitch.Data.Schema
   import Ecto.Query
 
-  alias Snitch.Data.Schema.OptionType
+  alias Snitch.Data.Schema.Option
 
   @type t :: %__MODULE__{}
 
@@ -18,8 +18,9 @@ defmodule Snitch.Data.Schema.VariationTheme do
 
     many_to_many(
       :option_types,
-      OptionType,
+      Option,
       join_through: "snitch_theme_option_types",
+      join_keys: [variation_theme_id: :id, option_id: :id],
       on_replace: :delete
     )
 
@@ -64,7 +65,7 @@ defmodule Snitch.Data.Schema.VariationTheme do
   end
 
   defp put_assoc_option_types(changeset, option_types) do
-    option_types = Repo.all(from(cr in OptionType, where: cr.id in ^option_types))
+    option_types = Repo.all(from(cr in Option, where: cr.id in ^option_types))
 
     put_assoc(changeset, :option_types, Enum.map(option_types, &change/1))
   end

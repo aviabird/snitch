@@ -60,7 +60,7 @@ defmodule AdminAppWeb.ProductView do
     variant = product.variants |> List.first()
 
     variant.options
-    |> Enum.map(fn x -> x.option_type end)
+    |> Enum.map(fn x -> x.option end)
   end
 
   def get_brand_options(brands) do

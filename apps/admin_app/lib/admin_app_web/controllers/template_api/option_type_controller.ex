@@ -3,7 +3,7 @@ defmodule AdminAppWeb.TemplateApi.OptionTypeController do
 
   alias AdminAppWeb.TemplateApi.OptionTypeView
   alias Snitch.Core.Tools.MultiTenancy.Repo
-  alias Snitch.Data.Model.{VariationTheme, ProductOptionValue}
+  alias Snitch.Data.Model.{VariationTheme, OptionValue}
   import Phoenix.View, only: [render_to_string: 3]
 
   def index(conn, %{"theme_id" => theme_id} = params) do
@@ -20,8 +20,8 @@ defmodule AdminAppWeb.TemplateApi.OptionTypeController do
   end
 
   def update(conn, %{"id" => id} = params) do
-    with {:ok, option_value} <- ProductOptionValue.get(id),
-         {:ok, option_value} <- ProductOptionValue.update(option_value, params) do
+    with {:ok, option_value} <- OptionValue.get(id),
+         {:ok, option_value} <- OptionValue.update(option_value, params) do
       render(conn, "option_value.json", option_value: option_value)
     end
   end

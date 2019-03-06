@@ -1,13 +1,13 @@
-defmodule Snitch.Data.Model.OptionTypeTest do
+defmodule Snitch.Data.Model.OptionTest do
   use ExUnit.Case, async: true
   use Snitch.DataCase
 
   import Snitch.Factory
 
-  alias Snitch.Data.Model.OptionType, as: OTModel
+  alias Snitch.Data.Model.Option, as: OptionModel
   alias Snitch.Data.Model.Product, as: ProductModel
   alias Snitch.Data.Model.VariationTheme, as: VTModel
-  alias Snitch.Data.Schema.{Product, OptionType, VariationTheme}
+  alias Snitch.Data.Schema.{Product, Option, VariationTheme}
   alias Snitch.Repo
 
   setup do
@@ -41,12 +41,12 @@ defmodule Snitch.Data.Model.OptionTypeTest do
 
   describe "option type association" do
     test "if it's associated with a product's theme", %{option_type: option_type} do
-      assert OTModel.is_theme_associated(option_type.id) == true
+      assert OptionModel.is_theme_associated(option_type.id) == true
     end
 
     test "if it's not associated with any product's theme" do
       option_type = insert(:option_type)
-      assert OTModel.is_theme_associated(option_type.id) == false
+      assert OptionModel.is_theme_associated(option_type.id) == false
     end
   end
 end

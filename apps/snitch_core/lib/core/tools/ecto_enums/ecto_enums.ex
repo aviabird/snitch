@@ -37,3 +37,10 @@ defenum(AddressTypes,
   billing_address: 1,
   store_address: 2
 )
+
+defenum(OptionTypeEnum,
+  swatch: 0,
+  radio_button: 1,
+  dropdown: 2,
+  rectangle: 3
+)
