@@ -28,18 +28,37 @@ defmodule Snitch.Data.Model.OrderTest do
   end
 
   describe "create_for_guest/3" do
-    test "with valid data", %{order_params: params, variants: vs} do
-      {:ok, order} = Order.create(params)
+    test "with valid params", %{order_params: params, variants: vs} do
+      {:ok, order} =
+        params
+        |> Map.put_new(:state, "confirmed")
+        |> Order.create_for_guest()
+
       assert length(order.line_items) == length(vs)
     end
 
     test "without line_items", %{order_params: params} do
       {:ok, order} =
         params
+        |> Map.put_new(:state, "confirmed")
         |> Map.put(:line_items, [])
-        |> Order.create()
+        |> Order.create_for_guest()
 
       assert [] = order.line_items
+    end
+  end
+
+  describe "user_order/1" do
+    test "returns an order", %{order_params: order_params} do
+      {:ok, order} = Order.create(order_params)
+      {:ok, returned_order} = Order.user_order(order.user_id)
+      assert returned_order.id == order.id
+    end
+
+    test "returns a guest order", %{order_params: params} do
+      {:ok, order} = Order.create_guest_order()
+      {:ok, returned_order} = Order.user_order(params.user_id)
+      assert returned_order.user_id != nil
     end
   end
 
@@ -127,6 +146,43 @@ defmodule Snitch.Data.Model.OrderTest do
       assert extract_ids(order.line_items) == extract_ids(new_order.line_items)
       assert new_order.state == :address
     end
+  end
+
+  describe "delete/1" do
+    test "successfully deletes an order", %{order_params: order_params} do
+      {:ok, order} = Order.create(order_params)
+      returned_order = Order.delete(order.id)
+      assert Order.get(order.id) == {:error, :order_not_found}
+    end
+
+    test "fails for invalid id" do
+      {:error, :order_not_found} = Order.get(-1)
+    end
+  end
+
+  describe "get/1" do
+    test "succesfully return an order", %{order_params: order_params} do
+      {:ok, order} = Order.create(order_params)
+      {:ok, returned_order} = Order.get(order.id)
+      assert returned_order.id == order.id
+    end
+
+    test "fails for invalid id" do
+      {:error, :order_not_found} == Order.get(-1)
+    end
+  end
+
+  test "get_all/0 returns all orders", %{order_params: order_params} do
+    {:ok, order} = Order.create(order_params)
+    assert Order.get_all() != []
+  end
+
+  test "get_all_with_preloads/1 returns an order with preloads as params", %{
+    order_params: order_params
+  } do
+    {:ok, order} = Order.create(order_params)
+    returned_order = Order.get_all_with_preloads(:line_items)
+    assert returned_order != []
   end
 
   describe "order" do

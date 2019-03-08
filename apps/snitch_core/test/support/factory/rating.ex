@@ -46,7 +46,7 @@ defmodule Snitch.Factory.Rating do
         count = Map.get(context, :rating_option_count, 2)
         [rating_options: insert_list(count, :rating_option, rating: rating)]
       end
-      
+
       def reviews(context) do
         rating_option = insert(:rating_option)
         count = Map.get(context, :review_count, 1)

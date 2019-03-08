@@ -73,6 +73,18 @@ defmodule Snitch.Data.Schema.OrderTest do
       cs = Order.create_changeset(build(:order), params)
       assert cs.valid?
     end
+
+    test "fails for non-existent user_id", %{user: user} do
+      params = %{
+        @order_params
+        | user_id: -1,
+          line_items: []
+      }
+
+      cs = Order.create_changeset(%Order{}, params)
+      {:error, changeset} = Repo.insert(cs)
+      assert %{user_id: ["does not exist"]} == errors_on(changeset)
+    end
   end
 
   describe "create_for_guest_changeset/2" do
