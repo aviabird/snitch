@@ -9,6 +9,8 @@ defmodule Snitch.Data.Model.Order do
   alias Snitch.Data.Model.LineItem, as: LineItemModel
 
   @order_states ["confirmed", "complete"]
+  @non_complete_order_states ~w(cart address delivery payment)a
+
   @doc """
   Creates an order with supplied `params` and `line_items`.
 
@@ -44,17 +46,16 @@ defmodule Snitch.Data.Model.Order do
   @doc """
   Returns an `order` struct for the supplied `user_id`.
 
-  An existing `order` associated with the user is present in either `cart` or
-  `address` state is returned if found. If no order is present for the user
-  in `cart` or `address` state a new order is created returned.
+  An existing `order` associated with the user present in "#{inspect(@non_complete_order_states)}"
+  state is returned if found. If no order is present for the user
+  in these states, a new order is created and returned.
   """
   @spec user_order(non_neg_integer) :: Order.t()
   def user_order(user_id) do
     query =
       from(
         order in Order,
-        where:
-          order.user_id == ^user_id and order.state in ["cart", "address", "delivery", "payment"]
+        where: order.user_id == ^user_id and order.state in ^@non_complete_order_states
       )
 
     query

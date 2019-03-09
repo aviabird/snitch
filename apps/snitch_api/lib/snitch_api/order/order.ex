@@ -43,6 +43,26 @@ defmodule SnitchApi.Order do
     Repo.preload(order, line_items: line_item_query)
   end
 
+  ####################### line item helpers ############################
+
+  def add_to_cart(line_item) do
+    case get_line_item(line_item["order_id"], line_item["product_id"]) do
+      [] -> LineItemModel.create(line_item)
+      [l | _] -> update_line_item(l, line_item)
+    end
+  end
+
+  defp get_line_item(order_id, product_id) do
+    query = from(l in LineItem, where: l.order_id == ^order_id and l.product_id == ^product_id)
+    Repo.all(query)
+  end
+
+  defp update_line_item(line_item, params) do
+    new_count = line_item.quantity + params["quantity"]
+    new_params = %{params | "quantity" => new_count}
+    LineItemModel.update(line_item, new_params)
+  end
+
   def delete_line_item(line_item_id) do
     with {:ok, %LineItem{} = line_item} <- LineItemModel.get(line_item_id),
          {:ok, _} <- LineItemModel.delete(line_item) do
@@ -52,12 +72,7 @@ defmodule SnitchApi.Order do
     end
   end
 
-  def add_to_cart(line_item) do
-    case get_line_item(line_item["order_id"], line_item["product_id"]) do
-      [] -> LineItemModel.create(line_item)
-      [l | _] -> update_line_item(l, line_item)
-    end
-  end
+  #################### order transition helpers #######################
 
   def add_payment(order_id, payment_method_id) do
     with {:ok, order} <- Order.get(order_id),
@@ -130,17 +145,6 @@ defmodule SnitchApi.Order do
       _ ->
         {:error, "package list does not equal all order packages"}
     end
-  end
-
-  defp get_line_item(order_id, product_id) do
-    query = from(l in LineItem, where: l.order_id == ^order_id and l.product_id == ^product_id)
-    Repo.all(query)
-  end
-
-  defp update_line_item(line_item, params) do
-    new_count = line_item.quantity + params["quantity"]
-    new_params = %{params | "quantity" => new_count}
-    LineItemModel.update(line_item, new_params)
   end
 
   defp transition_response(%Context{errors: nil}, order_id) do

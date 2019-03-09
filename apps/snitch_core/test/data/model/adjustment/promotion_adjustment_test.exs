@@ -4,7 +4,7 @@ defmodule Snitch.Data.Model.PromotionAdjustmentTest do
   use ExUnit.Case
   use Snitch.DataCase
   import Snitch.Factory
-  alias Snitch.Data.Model.{Promotion, PromotionAdjustment}
+  alias Snitch.Data.Model.{Promotion, PromotionAdjustment, Adjustment}
 
   describe "promotion adjustment queries" do
     setup do
@@ -46,8 +46,9 @@ defmodule Snitch.Data.Model.PromotionAdjustmentTest do
     test "order_adjustments_for_promotion/2", context do
       %{order: order, promotion1: promotion1, promotion2: promotion2} = context
 
-      # since promotion is applied twice there should be 8 adjustments
+      # since two promotions are applied twice there should be 8 adjustments
       # promotion1 -> 1 order + 3 lineitems = 4
+      # promotion2 -> 1 order + 3 lineitems = 4
       Promotion.activate?(order, promotion1)
       Promotion.activate?(order, promotion2)
 
@@ -71,8 +72,6 @@ defmodule Snitch.Data.Model.PromotionAdjustmentTest do
       adjustments = PromotionAdjustment.order_adjustments_for_promotion(order, promotion1)
       data = PromotionAdjustment.eligible_order_adjustments(order)
       assert data == []
-
-      current_adj_ids = Enum.map(adjustments, fn adjustment -> adjustment.id end)
 
       # activate adjustments for promotion1
       {:ok, _data} = PromotionAdjustment.process_adjustments(order, promotion1)

@@ -6,7 +6,7 @@ defmodule Snitch.Data.Model.LineItem do
 
   import Ecto.Changeset, only: [change: 1]
 
-  alias Snitch.Data.Model.{Variant, Product}
+  alias Snitch.Data.Model.Product
   alias Snitch.Data.Schema.LineItem
   alias Snitch.Domain.Order
   alias Snitch.Tools.Money, as: MoneyTools

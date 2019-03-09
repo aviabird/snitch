@@ -3,9 +3,8 @@ defmodule SnitchApiWeb.LineItemController do
 
   alias Snitch.Data.Model.LineItem, as: LineItemModel
   alias Snitch.Data.Model.Order, as: OrderModel
-  alias Snitch.Data.Schema.{LineItem, Variant, Product}
+  alias Snitch.Data.Schema.{LineItem, Product}
   alias Snitch.Core.Tools.MultiTenancy.Repo
-  import Ecto.Query
   alias SnitchApi.Order, as: OrderContext
 
   plug(SnitchApiWeb.Plug.DataToAttributes)
@@ -35,7 +34,7 @@ defmodule SnitchApiWeb.LineItemController do
 
   def guest_line_item(conn, %{"order_id" => order_id} = params) do
     with {:ok, line_item} <- add_line_item(params) do
-      order = OrderContext.load_order(line_item.order_id)
+      order = OrderContext.load_order(order_id)
 
       conn
       |> put_status(200)

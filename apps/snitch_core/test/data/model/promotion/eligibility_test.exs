@@ -42,7 +42,7 @@ defmodule Snitch.Data.Model.Promotion.EligibilityTest do
 
   describe "order_level_check/2" do
     test "fails as order not in valid state" do
-      order = insert(:order, state: :cart)
+      order = insert(:order, state: :confirmed)
       promotion = insert(:promotion, match_policy: "all")
 
       assert {false, message} = Eligibility.order_level_check(order, promotion)

@@ -59,6 +59,9 @@ defmodule Snitch.Data.Model.PromotionAdjustment do
     Repo.all(query)
   end
 
+  @doc """
+  Returns all adjustments for the supplied `order` and `promotion`.
+  """
   def order_adjustments_for_promotion(order, promotion) do
     query =
       from(adj in AdjustmentSchema,
@@ -98,11 +101,11 @@ defmodule Snitch.Data.Model.PromotionAdjustment do
   @doc """
   Processes adjustments for the supplied `order` and `promotion`.
 
-  Adjustments are created due for all the `actions` of a `promotion`
-  for an order. However, these adjustments are created in an ineligible state,
+  Adjustments are created for all the `actions` of a `promotion`
+  on an order. However, these adjustments are created in an ineligible state,
   handled by the `eligible` field in `Adjustments` which is initially false.
 
-  The `eligible` field is marked true subject to condition that a better promotion
+  The `eligible` field is marked true subject to condition that, a better promotion
   doesn't exist already for the order.
   In case a better promotion exists `{:error, message}` tuple is returned.
   Otherwise, the adjustments due to previous promotion are marked as ineligible
@@ -122,6 +125,7 @@ defmodule Snitch.Data.Model.PromotionAdjustment do
 
     if current_discount > previous_discount do
       case activate_adjustments(
+             order,
              prev_eligible_ids,
              current_adjustment_ids
            ) do
@@ -138,14 +142,23 @@ defmodule Snitch.Data.Model.PromotionAdjustment do
 
   ################## private functions ################
 
-  defp activate_adjustments(prev_eligible_ids, current_adjustment_ids) do
+  defp activate_adjustments(order, prev_eligible_ids, current_adjustment_ids) do
     Multi.new()
-    |> Multi.run(:remove_eligible_adjustments, fn _ ->
+    |> Multi.run(:remove_previous_eligible_adjustments, fn _ ->
       {:ok, update_adjustments(prev_eligible_ids, false)}
     end)
     |> Multi.run(:activate_new_adjustments, fn _ ->
       {:ok, update_adjustments(current_adjustment_ids, true)}
     end)
+    |> Multi.delete_all(
+      :delete_ineligible_adjustments,
+      from(
+        adj in AdjustmentSchema,
+        join: p_adj in PromotionAdjustment,
+        on: p_adj.adjustment_id == adj.id,
+        where: p_adj.order_id == ^order.id and adj.eligible == false
+      )
+    )
     |> Repo.transaction()
     |> case do
       {:ok, data} ->
@@ -215,8 +228,8 @@ defmodule Snitch.Data.Model.PromotionAdjustment do
   # Run the accumulated multi struct
   defp persist(multi) do
     case Repo.transaction(multi) do
-      {:ok, %{promo_adj: promo_adjustment}} ->
-        {:ok, promo_adjustment}
+      {:ok, %{adjustment: adjustment}} ->
+        {:ok, adjustment}
 
       {:error, _, data, _} ->
         {:error, data}

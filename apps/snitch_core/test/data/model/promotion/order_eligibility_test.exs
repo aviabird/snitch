@@ -21,7 +21,7 @@ defmodule Snitch.Data.Model.Promotion.OrderEligibilityTest do
     end
 
     test "fails if order state not valid for promotion" do
-      order = insert(:order, state: :cart)
+      order = insert(:order, state: :confirmed)
 
       assert {false, message} = OrderEligibility.valid_order_state(order)
       assert message == "promotion not applicable to order"

@@ -6,7 +6,7 @@ defmodule Snitch.Data.Model.Promotion.OrderEligibility do
   use Snitch.Data.Model
   alias Snitch.Data.Model.PromotionAdjustment
 
-  @valid_order_states ~w(delivery address)a
+  @valid_order_states ~w(delivery address cart)a
   @success_message "promotion applicable"
   @error_message "coupon not applicable"
   @coupon_applied "coupon already applied"

@@ -194,9 +194,9 @@ defmodule Snitch.Data.Model.Promotion do
     end
   end
 
-  def update_usage_count(promotion) do
+  def update_usage_count(promotion, count) do
     current_usage_count = promotion.current_usage_count
-    params = %{current_usage_count: current_usage_count + 1}
+    params = %{current_usage_count: current_usage_count + count}
 
     QH.update(Promotion, params, promotion, Repo)
   end
@@ -216,6 +216,7 @@ defmodule Snitch.Data.Model.Promotion do
   defp process_adjustments(order, promotion) do
     case PromotionAdjustment.process_adjustments(order, promotion) do
       {:ok, _data} ->
+        update_usage_count(promotion, 1)
         {:ok, @messages.coupon_applied}
 
       {:error, _message} = error ->

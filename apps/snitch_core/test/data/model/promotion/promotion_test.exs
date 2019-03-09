@@ -337,13 +337,10 @@ defmodule Snitch.Data.Model.PromotionTest do
       assert message == @messages.coupon_applied
 
       old_adjustments = PromotionAdjustment.order_adjustments_for_promotion(order, promotion)
+      assert old_adjustments == []
 
       new_adjustments =
         PromotionAdjustment.order_adjustments_for_promotion(order, promotion_other)
-
-      Enum.each(old_adjustments, fn adjustment ->
-        assert adjustment.eligible == false
-      end)
 
       Enum.each(new_adjustments, fn adjustment ->
         assert adjustment.eligible == true
